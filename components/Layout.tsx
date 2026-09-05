@@ -3,7 +3,7 @@ import { User, Language } from '../types';
 import { translations } from '../translations';
 
 type ActiveModule = 'trip' | 'trip_invoice' | 'inspection' | 'driver_vat' | 'expense_demo' | 'feedback';
-type NavigationTarget = 'dashboard' | 'create' | 'trips' | 'trip_invoices' | 'inspections' | 'driver_vat' | 'expense_demo' | 'feedback';
+type NavigationTarget = 'home' | 'dashboard' | 'create' | 'trips' | 'trip_invoices' | 'inspections' | 'driver_vat' | 'expense_demo' | 'feedback';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -33,13 +33,14 @@ export const Layout: React.FC<LayoutProps> = ({ children, user, currentView, act
   const canCreate = activeModule === 'trip' || activeModule === 'inspection';
   const moduleMeta = moduleTitles[activeModule];
   const createLabel = activeModule === 'inspection' ? t.newInspection : t.newTrip;
+  const displayName = user.full_name || user.user;
 
   return (
     <div className={`flex flex-col min-h-screen max-w-md mx-auto app-shell shadow-2xl relative overflow-hidden ${fontClass}`} dir={isRtl ? 'rtl' : 'ltr'}>
       <header className="sticky top-0 z-50 app-header px-4 pt-4 pb-3 shadow-xl shadow-black/20">
         <div className="flex items-center gap-3 min-w-0">
           <button
-            onClick={() => onNavigate('dashboard')}
+            onClick={() => onNavigate('home')}
             className="w-11 h-11 flex-shrink-0 flex items-center justify-center active:scale-95 transition-all"
             aria-label={t.home}
           >
@@ -48,6 +49,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, user, currentView, act
           <div className="min-w-0 flex-1">
             <p className="text-[9px] font-black text-white/40 uppercase tracking-[0.22em] leading-none">{moduleMeta.eyebrow}</p>
             <h1 className="font-black text-base truncate tracking-tight mt-1">{moduleMeta.title}</h1>
+            <p className="text-[10px] font-bold text-white/60 truncate mt-0.5">Welcome, {displayName}</p>
           </div>
           <button
             onClick={() => setMenuOpen(true)}
@@ -65,7 +67,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, user, currentView, act
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-[9px] font-black text-[var(--cyan)] uppercase tracking-[0.2em]">{t.signedIn}</p>
-                <p className="text-sm font-black text-[var(--ink)] truncate max-w-[220px]">{user.full_name || user.user}</p>
+                <p className="text-sm font-black text-[var(--ink)] truncate max-w-[220px]">{displayName}</p>
               </div>
               <button onClick={() => setMenuOpen(false)} className="w-10 h-10 rounded-2xl surface-muted text-[var(--ink-soft)] flex items-center justify-center">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
@@ -127,7 +129,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, user, currentView, act
       <nav className="fixed bottom-0 left-0 right-0 max-w-md mx-auto px-4 pb-4 z-40 pointer-events-none">
         <div className="h-20 surface-panel backdrop-blur-xl rounded-[2rem] flex items-center justify-around px-4 pointer-events-auto">
           <button
-            onClick={() => onNavigate('dashboard')}
+            onClick={() => onNavigate('home')}
             className={`flex flex-col items-center gap-1.5 transition-colors ${currentView === 'dashboard' ? 'text-[var(--ink)]' : 'text-[var(--ink-soft)]/45'}`}
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>

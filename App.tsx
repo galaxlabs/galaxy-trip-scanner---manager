@@ -15,7 +15,7 @@ import { Layout } from './components/Layout';
 
 type ActiveModule = 'trip' | 'trip_invoice' | 'inspection' | 'driver_vat' | 'expense_demo' | 'feedback';
 type CurrentView = 'dashboard' | 'create' | 'edit';
-type NavigationTarget = CurrentView | ActiveModule | 'trips' | 'trip_invoices' | 'inspections';
+type NavigationTarget = CurrentView | ActiveModule | 'home' | 'trips' | 'trip_invoices' | 'inspections';
 
 function moduleFromPath(pathname: string): ActiveModule {
   if (pathname === '/dashboard/driver-vat') return 'driver_vat';
@@ -109,6 +109,16 @@ function AppContent() {
   };
 
   const handleNavigate = (view: NavigationTarget) => {
+    if (view === 'home') {
+      setActiveModule('trip');
+      setCurrentView('dashboard');
+      setSelectedTrip(null);
+      setSelectedInspection(null);
+      if (window.location.pathname !== '/') {
+        window.history.pushState({}, '', '/');
+      }
+      return;
+    }
     if (view === 'trips') { activateModule('trip'); return; }
     if (view === 'trip_invoices') { activateModule('trip_invoice'); return; }
     if (view === 'inspections') { activateModule('inspection'); return; }

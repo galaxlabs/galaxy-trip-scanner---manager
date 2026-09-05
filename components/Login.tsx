@@ -15,6 +15,7 @@ const Login: React.FC<LoginProps> = ({ onLogin, lang, onLangChange }) => {
   const [error, setError] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   
   const t = translations[lang];
   const isRtl = lang === 'ar' || lang === 'ur';
@@ -97,14 +98,21 @@ const Login: React.FC<LoginProps> = ({ onLogin, lang, onLangChange }) => {
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
               </div>
               <input 
-                type="password" 
+                type={showPassword ? "text" : "password"} 
                 autoComplete="current-password"
                 placeholder={t.password}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className={`w-full surface-muted rounded-2xl py-4 ${isRtl ? 'pr-12 pl-4' : 'pl-12 pr-4'} text-sm font-bold text-[var(--ink)] outline-none focus:ring-4 focus:ring-[var(--amber)]/20 transition-all`}
+                className={`w-full surface-muted rounded-2xl py-4 ${isRtl ? 'pr-12 pl-14' : 'pl-12 pr-14'} text-sm font-bold text-[var(--ink)] outline-none focus:ring-4 focus:ring-[var(--amber)]/20 transition-all`}
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword((value) => !value)}
+                className={`absolute top-1/2 -translate-y-1/2 ${isRtl ? 'left-4' : 'right-4'} text-[10px] font-black uppercase text-[var(--ink-soft)]`}
+              >
+                {showPassword ? 'Hide' : 'Show'}
+              </button>
             </div>
           </div>
           
