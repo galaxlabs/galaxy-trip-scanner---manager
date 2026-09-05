@@ -92,11 +92,20 @@ export class FrappeClient {
       try {
         const msgs = JSON.parse(data._server_messages);
         msg = (msgs || [])
-          .map((m: any) => (typeof m === "string" ? m : m?.message || JSON.stringify(m)))
+          .map((m: any) => {
+            if (typeof m === "string") {
+              try { return JSON.parse(m)?.message || m; } catch { return m; }
+            }
+            return m?.message || JSON.stringify(m);
+          })
           .join(", ");
       } catch {
         msg = data._server_messages;
       }
+    }
+
+    if (data?.exc_type === "AuthenticationError" && String(msg).includes("Invalid username or password")) {
+      msg = "Invalid username or password";
     }
 
     // ✅ attach raw server response for debugging
