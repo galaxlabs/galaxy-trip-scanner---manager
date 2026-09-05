@@ -28,10 +28,16 @@ export class FrappeClient {
   const url = new URL("/api/frappe", window.location.origin);
   url.searchParams.set("method", method);
 
+  const portalToken = localStorage.getItem("frappe_portal_token") || "";
+  const mergedParams = { ...(params || {}) };
+  if (portalToken && method !== "tms.api.auth.portal_login") {
+    mergedParams.portal_token = portalToken;
+  }
+
   // GET params -> querystring
   if (reqMethod === "GET") {
-    Object.keys(params || {}).forEach((key) => {
-      const v = params[key];
+    Object.keys(mergedParams).forEach((key) => {
+      const v = mergedParams[key];
       if (v !== undefined && v !== null) {
         const val = typeof v === "object" ? JSON.stringify(v) : String(v);
         url.searchParams.append(key, val);
@@ -54,8 +60,6 @@ export class FrappeClient {
 
   // Inject per-user API credentials for user-level auth
   const creds = FrappeClient.getApiCredentials();
-  let mergedParams = { ...(params || {}) };
-
   // Non-GET: JSON body
   if (reqMethod !== "GET" && reqMethod !== "HEAD") {
     if (creds) {
@@ -112,17 +116,21 @@ export class FrappeClient {
   }
 
   static async login(username: string, _password?: string) {
-    const profile = { username, full_name: username };
+    const res = await this.fetch("tms.api.auth.portal_login", { username, password: _password }, { method: "POST" });
+    const profile = res.message;
+    if (!profile?.token) throw new Error("Login failed: missing portal token");
+    localStorage.setItem("frappe_portal_token", profile.token);
     localStorage.setItem("frappe_user", JSON.stringify(profile));
     return profile;
   }
 
   static async logout() {
     localStorage.removeItem("frappe_user");
+    localStorage.removeItem("frappe_portal_token");
   }
 
   static isLoggedIn(): boolean {
-    return !!localStorage.getItem("frappe_user");
+    return !!localStorage.getItem("frappe_user") && !!localStorage.getItem("frappe_portal_token");
   }
 
   static getApiCredentials(): { api_key: string; api_secret: string } | null {

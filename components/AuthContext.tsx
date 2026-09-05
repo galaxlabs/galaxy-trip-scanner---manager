@@ -62,7 +62,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const refresh = useCallback(async () => {
     try {
       const stored = localStorage.getItem('frappe_user');
-      if (stored) {
+      const portalToken = localStorage.getItem('frappe_portal_token');
+      if (stored && portalToken) {
         const parsed = JSON.parse(stored);
         setUser({
           user: parsed.username || parsed.name,
@@ -73,6 +74,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           roles: parsed.roles || [],
         });
       } else {
+        localStorage.removeItem('frappe_user');
+        localStorage.removeItem('frappe_portal_token');
         setUser(null);
       }
     } catch {
@@ -84,9 +87,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const stored = localStorage.getItem('frappe_user');
-    if (stored) {
+    const portalToken = localStorage.getItem('frappe_portal_token');
+    if (stored && portalToken) {
       refresh();
     } else {
+      localStorage.removeItem('frappe_user');
+      localStorage.removeItem('frappe_portal_token');
       setLoading(false);
     }
   }, [refresh]);

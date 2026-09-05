@@ -83,6 +83,7 @@ const Login: React.FC<LoginProps> = ({ onLogin, lang, onLangChange }) => {
               </div>
               <input 
                 type="text" 
+                autoComplete="username"
                 placeholder={t.username}
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
@@ -97,6 +98,7 @@ const Login: React.FC<LoginProps> = ({ onLogin, lang, onLangChange }) => {
               </div>
               <input 
                 type="password" 
+                autoComplete="current-password"
                 placeholder={t.password}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
